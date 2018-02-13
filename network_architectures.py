@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow.contrib.layers import batch_norm
-from tensorflow.python.ops.nn_ops import leaky_relu
+from tensorflow.python.ops.nn_ops import relu
 
 from utils.network_summary import count_parameters
 
@@ -61,7 +61,7 @@ class VGGClassifier:
                                 outputs = tf.layers.conv2d(outputs, self.layer_stage_sizes[i], [3, 3],
                                                            strides=(stride, stride),
                                                            padding='SAME', activation=None)
-                                outputs = leaky_relu(outputs, name="leaky_relu{}".format(i))
+                                outputs = relu(outputs, name="relu{}".format(i))
                                 layer_features.append(outputs)
                                 if self.batch_norm_use:
                                     outputs = batch_norm(outputs, decay=0.99, scale=True,
@@ -138,7 +138,7 @@ class FCCLayerClassifier:
                         for j in range(self.inner_layer_depth):
                             with tf.variable_scope('conv_{}_{}'.format(i, j)):
                                 outputs = tf.layers.dense(outputs, units=self.layer_stage_sizes[i])
-                                outputs = leaky_relu(outputs, name="leaky_relu{}".format(i))
+                                outputs = relu(outputs, name="relu{}".format(i))
                                 layer_features.append(outputs)
                                 if self.batch_norm_use:
                                     outputs = batch_norm(outputs, decay=0.99, scale=True,
