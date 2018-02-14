@@ -76,8 +76,9 @@ class VGGClassifier:
 
             c_conv_encoder = outputs
             c_conv_encoder = tf.contrib.layers.flatten(c_conv_encoder)
-            c_conv_encoder = tf.layers.dense(c_conv_encoder, units=self.num_classes)
-
+            c_conv_encoder = tf.layers.conv2d(c_conv_encoder, self.num_classes, [1, 1],
+                                                           strides=(stride, stride),
+                                                           padding='SAME', activation=None)
         self.reuse = True
         self.variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
 
