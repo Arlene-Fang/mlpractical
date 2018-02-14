@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.contrib.layers import batch_norm
 from tensorflow.python.ops.nn_ops import relu
+from tensorflow.contrib.layers.python.layers import utils
 
 from utils.network_summary import count_parameters
 
@@ -75,10 +76,16 @@ class VGGClassifier:
                                                                               # every group
 
             c_conv_encoder = outputs
-            c_conv_encoder = tf.contrib.layers.flatten(c_conv_encoder)
-            c_conv_encoder = tf.layers.conv2d(c_conv_encoder, self.num_classes, [1, 1],
-                                                           strides=(stride, stride),
-                                                           padding='SAME', activation=None)
+            c_conv_encoder = tf.layers.conv2d(c_conv_encoder,
+                                self.num_classes, [1, 1],
+                                activation_fn=None,
+                                normalizer_fn=None)
+            # Convert end_points_collection into a end_point dict.
+            c_conv_encoder = utils.convert_collection_to_dict(c_conv_encoder)
+            c_conv_encoder = array_ops.squeeze(c_conv_encoder, [1, 2])
+            # c_conv_encoder = tf.contrib.layers.flatten(c_conv_encoder)
+            # c_conv_encoder = tf.layers.dense(c_conv_encoder, units=self.num_classes)
+
         self.reuse = True
         self.variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
 
